@@ -133,7 +133,8 @@ function sendTransaction(isAdding) {
             }
         })
         .catch(err => {
-            // fetch failed, so save in indexed db
+            alert('Currently unable to connect to server:\n\nThis transaction will not be visible on other devices until your internet connection is restored.')
+                // fetch failed, so save in indexed db
             saveRecord(transaction);
 
             // clear form
