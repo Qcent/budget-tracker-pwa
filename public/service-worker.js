@@ -3,11 +3,13 @@ const VERSION = 'version_01';
 const CACHE_NAME = APP_PREFIX + VERSION;
 
 const FILES_TO_CACHE = [
+    "./",
+    "./api/transaction",
+    "./icons/icon-192x192.png",
     "./index.html",
     "./css/styles.css",
     "./js/index.js",
-    "./idb.js",
-    "https://cdn.jsdelivr.net/npm/chart.js@2.8.0"
+    "./js/idb.js",
 ];
 
 self.addEventListener('install', function(e) {
