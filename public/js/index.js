@@ -1,7 +1,7 @@
 let transactions = [];
 let myChart;
 
-fetch("/api/transaction")
+const queryServer = () => fetch("/api/transaction")
     .then(response => {
         return response.json();
     })
@@ -149,3 +149,5 @@ document.querySelector("#add-btn").onclick = function() {
 document.querySelector("#sub-btn").onclick = function() {
     sendTransaction(false);
 };
+
+queryServer();

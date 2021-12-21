@@ -28,6 +28,7 @@ request.onerror = function(event) {
 
 // This function will be executed if we attempt to submit a new transaction and there's no internet connection
 function saveRecord(record) {
+    //console.log(record);
     // open a new transaction with the database with read and write permissions 
     const transaction = db.transaction(['new_transaction'], 'readwrite');
 
@@ -36,6 +37,8 @@ function saveRecord(record) {
 
     // add record to your store with add method
     transactionObjectStore.add(record);
+
+    console.log('Transaction stored in IndexDB');
 }
 
 function uploadTransaction() {
@@ -52,6 +55,7 @@ function uploadTransaction() {
     getAll.onsuccess = function() {
         // if there was data in indexedDb's store, let's send it to the api server
         if (getAll.result.length > 0) {
+            console.log(`Connection restored: ${getAll.result.length} transaction(s) to submit.`);
             fetch('/api/transaction', {
                     method: 'POST',
                     body: JSON.stringify(getAll.result),
@@ -72,7 +76,8 @@ function uploadTransaction() {
                     // clear all items in your store
                     transactionObjectStore.clear();
 
-                    alert('All saved transactions have been submitted!');
+                    console.log('All saved transactions have been submitted!');
+                    queryServer();
                 })
                 .catch(err => {
                     console.log(err);
