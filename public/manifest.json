@@ -47,6 +47,6 @@
     "display": "standalone",
     "start_url": "index.html",
     "description": "Create a budget, add expenses and deposits. Fully functional offline but backed up by a cloud database.",
-    "background_color": "#696969",
-    "theme_color": "#426596"
+    "background_color": "#140d0d",
+    "theme_color": "#75947c"
 }
