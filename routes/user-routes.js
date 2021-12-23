@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Transaction } = require('../models');
 
 const UserFunctions = {
     // get all Users
@@ -54,6 +54,53 @@ const UserFunctions = {
                 res.status(400).json(err);
             });
     },
+
+    // delete a Users Transactions
+    deleteUsersTransactions({ body }, res) {
+        User.findOne({ _id: body.userId })
+            .lean() // no virtuals
+            .select('-_id') // no id
+            .select('transactions') // just the transactions
+            .populate({
+                path: 'transactions',
+                select: '-__v'
+            })
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No User found with this id!' });
+                    return;
+                }
+                // just the transactions array is needed
+                //res.json(dbUserData.transactions.reverse());
+                dbUserData.transactions.forEach(item => {
+                    Transaction.findOneAndDelete({ _id: item._id })
+                        .then(deletedTransaction => {
+                            if (!deletedTransaction) {
+                                return res.status(404).json({ message: 'No Transaction with this id!' });
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(400).json(err);
+                        });
+                });
+
+                User.findOneAndUpdate({ _id: body.userId }, { transactions: [] }, { new: true, runValidators: true })
+                    .then(message => res.json(message))
+                    .catch(err => {
+                        console.log(err);
+                        res.status(400).json(err);
+                    });
+
+
+
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(400).json(err);
+            });
+    },
+
 
     // createUser
     createUser({ body }, res) {
