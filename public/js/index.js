@@ -117,6 +117,8 @@ function sendTransaction(isAdding) {
 
     // add to beginning of current array of data
     transactions.unshift(transaction);
+    // also save in localStorage for offline recall
+    localStorage.transactions = JSON.stringify(transactions);
 
     // re-run logic to populate ui with new record
     populateChart();
