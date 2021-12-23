@@ -138,6 +138,56 @@ const UserFunctions = {
             .catch(err => res.status(400).json(err));
     },
 
+    userLogin({ body, session }, res) {
+        console.log("*************** LOGIN ATTEMPT ***************");
+
+        if (session.loggedIn) {
+            console.log("ALREADY LOGGED IN!")
+            res.status(400).json({ message: 'ALREADY LOGGED IN!' });
+            return;
+        }
+
+        User.findOne({
+            email: body.email
+        }).then(dbUserData => {
+            if (!dbUserData) {
+                res.status(400).json({ message: 'No user with that email address!' });
+                console.log("=========== !FAILURE! =============");
+                return;
+            }
+
+            // Verify user
+            const validPassword = dbUserData.comparePassword(body.password, (err, match) => {
+                if (!match) {
+                    res.status(400).json({ message: 'Incorrect password!' });
+                    console.log("=========== !FAILURE! =============");
+                    return;
+                }
+
+                session.save(() => {
+                    // declare session variables
+                    session.userId = dbUserData._id;
+                    session.username = dbUserData.username;
+                    session.loggedIn = true;
+
+                    res.json({ user: dbUserData, message: 'You are now logged in!' });
+                    console.log("=========== SUCCESS! =============");
+                });
+            });
+        });
+    },
+
+    userLogout(req, res) {
+        console.log("************** LOGGING OUT **************");
+        if (req.session.loggedIn) {
+            req.session.destroy(() => {
+                res.status(204).end();
+            });
+        } else {
+            res.status(404).json({ message: 'Not Logged In!' });
+        }
+    },
+
 }
 
 

@@ -2,40 +2,6 @@ const router = require("express").Router();
 const { User, Transaction } = require('../models');
 
 
-// POST /api/users/login
-router.post('/api/login', (req, res) => {
-    console.log("*************** LOGIN ATTEMPT ***************");
-    User.findOne({
-        email: req.body.email
-    }).then(dbUserData => {
-        if (!dbUserData) {
-            res.status(400).json({ message: 'No user with that email address!' });
-            console.log("=========== !FAILURE! =============");
-            return;
-        }
-
-        // Verify user
-        const validPassword = dbUserData.comparePassword(req.body.password, (err, match) => {
-            if (!match) {
-                res.status(400).json({ message: 'Incorrect password!' });
-                console.log("=========== !FAILURE! =============");
-                return;
-            }
-
-            req.session.save(() => {
-                // declare session variables
-                req.session.userId = dbUserData._id;
-                req.session.username = dbUserData.username;
-                req.session.loggedIn = true;
-
-                res.json({ user: dbUserData, message: 'You are now logged in!' });
-                console.log("=========== SUCCESS! =============");
-            });
-        });
-
-    });
-
-})
 
 
 /* USER ROUTES */
@@ -46,12 +12,18 @@ const {
     createUser,
     deleteUser,
     getUsersTransactions,
-    deleteUsersTransactions
+    deleteUsersTransactions,
+    userLogin,
+    userLogout
 } = require('./user-routes');
 
 // /api/users
 router.route('/api/users').get(getAllUser).post(createUser);
 router.route('/api/user').get(getUserById).delete(deleteUser);
+
+router.route('/api/user/login').post(userLogin);
+router.route('/api/user/logout').post(userLogout);
+
 router.route('/api/user/transactions').get(getUsersTransactions).delete(deleteUsersTransactions);
 
 /******************** */
