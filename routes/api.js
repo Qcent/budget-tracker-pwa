@@ -5,27 +5,21 @@ const { User, Transaction } = require('../models');
 
 const {
     getUserById,
+    getAllUser,
     createUser,
-    deleteUser
-} = require('user-routes');
+    deleteUser,
+    getUsersTransactions
+} = require('./user-routes');
 
 // /api/users?user=<userId>
-router.route('/api/users').get(getUserById).post(createUser).delete(deleteUser);
+router.route('/api/users').get(getAllUser).post(createUser).delete(deleteUser);
+router.route('/api/user').get(getUserById);
+router.route('/api/user/transactions').get(getUsersTransactions);
 
 /******************** */
 /* TRANSACTION ROUTES */
 /******************** */
 router.post("/api/transaction", ({ body }, res) => {
-    /*
-    Transaction.create(body)
-      .then(dbTransaction => {
-        res.json(dbTransaction);
-      })
-      .catch(err => {
-        res.status(404).json(err);
-      });
-      */
-
     Transaction.create(body)
         .then(({ _id }) => {
             return User.findOneAndUpdate({ _id: body.userId }, { $push: { transactions: _id } }, { new: true, runValidators: true });

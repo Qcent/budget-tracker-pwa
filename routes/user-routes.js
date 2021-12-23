@@ -1,4 +1,4 @@
-const { User, Transaction } = require('../models');
+const { User } = require('../models');
 
 const UserFunctions = {
     // get all Users
@@ -14,23 +14,40 @@ const UserFunctions = {
     },
 
     // get one User by id
-    getUserById({ query }, res) {
-        User.findOne({ _id: query.user })
-            .populate({
-                path: 'thoughts',
-                select: '-__v'
-            })
-            .populate({
-                path: 'friends',
-                select: '-__v'
-            })
+    getUserById({ body }, res) {
+        User.findOne({ _id: body.userId })
+            .populate({ path: 'transactions', select: '-__v' })
             .select('-__v')
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: `No User found with this id! : ${body.userId}` });
+                    return;
+                }
+                res.json(dbUserData);
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(400).json(err);
+            });
+    },
+
+    // get one Users Transactions
+    getUsersTransactions({ body }, res) {
+        User.findOne({ _id: body.userId })
+            .lean() // no virtuals
+            .select('-_id') // no id
+            .select('transactions') // just the transactions
+            .populate({
+                path: 'transactions',
+                select: '-__v'
+            })
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.status(404).json({ message: 'No User found with this id!' });
                     return;
                 }
-                res.json(dbUserData);
+                // just the transactions array is returned in reverse order
+                res.json(dbUserData.transactions.reverse());
             })
             .catch(err => {
                 console.log(err);
@@ -46,8 +63,8 @@ const UserFunctions = {
     },
 
     // update User by id
-    updateUser({ query, body }, res) {
-        User.findOneAndUpdate({ _id: query.user }, body, { new: true, runValidators: true })
+    updateUser({ body }, res) {
+        User.findOneAndUpdate({ _id: body.userId }, body, { new: true, runValidators: true })
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.status(404).json({ message: 'No User found with this id!' });
@@ -59,8 +76,8 @@ const UserFunctions = {
     },
 
     // delete User
-    deleteUser({ query }, res) {
-        User.findOneAndDelete({ _id: query.user })
+    deleteUser({ body }, res) {
+        User.findOneAndDelete({ _id: body.userId })
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.status(404).json({ message: 'No User found with this id!' });
