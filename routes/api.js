@@ -1,8 +1,6 @@
 const router = require("express").Router();
 const { User, Transaction } = require('../models');
-
-
-
+const withAuth = require('../utils/auth');
 
 /* USER ROUTES */
 
@@ -18,18 +16,18 @@ const {
 } = require('./user-routes');
 
 // /api/users
-router.route('/api/users').get(getAllUser).post(createUser);
-router.route('/api/user').get(getUserById).delete(deleteUser);
+router.route('/api/users').get(withAuth, getAllUser).post(createUser);
+router.route('/api/user').get(withAuth, getUserById).delete(deleteUser);
 
 router.route('/api/user/login').post(userLogin);
 router.route('/api/user/logout').post(userLogout);
 
-router.route('/api/user/transactions').get(getUsersTransactions).delete(deleteUsersTransactions);
+router.route('/api/user/transactions').get(withAuth, getUsersTransactions).delete(withAuth, deleteUsersTransactions);
 
 /******************** */
 /* TRANSACTION ROUTES */
 /******************** */
-router.post("/api/transaction", ({ body }, res) => {
+router.post("/api/transaction", withAuth, ({ body }, res) => {
     Transaction.create(body)
         .then(({ _id }) => {
             return User.findOneAndUpdate({ _id: body.userId }, { $push: { transactions: _id } }, { new: true, runValidators: true });
@@ -44,7 +42,7 @@ router.post("/api/transaction", ({ body }, res) => {
         .catch(err => res.json(err));
 });
 
-router.post("/api/transaction/bulk", ({ body }, res) => {
+router.post("/api/transaction/bulk", withAuth, ({ body }, res) => {
     Transaction.insertMany(body)
         .then(dbTransaction => {
             res.json(dbTransaction);
@@ -54,7 +52,7 @@ router.post("/api/transaction/bulk", ({ body }, res) => {
         });
 });
 
-router.get("/api/transaction", (req, res) => {
+router.get("/api/transaction", withAuth, (req, res) => {
     Transaction.find({}).sort({ date: -1 })
         .then(dbTransaction => {
             res.json(dbTransaction);
@@ -64,7 +62,7 @@ router.get("/api/transaction", (req, res) => {
         });
 });
 
-router.delete("/api/transaction", (req, res) => {
+router.delete("/api/transaction", withAuth, (req, res) => {
     Transaction.findOneAndDelete({ _id: req.body.id })
         .then(deletedTransaction => {
             if (!deletedTransaction) {

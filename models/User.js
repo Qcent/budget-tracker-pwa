@@ -70,7 +70,7 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
 };
 
 
-// get total count of comments and replies on retrieval
+// get total count of transactions on retrieval
 UserSchema.virtual('transactionCount').get(function() {
     return this.transactions.length;
 });
