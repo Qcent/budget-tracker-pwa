@@ -13,8 +13,8 @@ const {
 } = require('./user-routes');
 
 // /api/users
-router.route('/api/users').get(getAllUser).post(createUser).delete(deleteUser);
-router.route('/api/user').get(getUserById);
+router.route('/api/users').get(getAllUser).post(createUser);
+router.route('/api/user').get(getUserById).delete(deleteUser);
 router.route('/api/user/transactions').get(getUsersTransactions).delete(deleteUsersTransactions);
 
 /******************** */
