@@ -3,6 +3,9 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 const compression = require("compression");
 
+const session = require("express-session");
+const MongoStore = require('connect-mongo')
+
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget";
 
@@ -21,6 +24,15 @@ mongoose.connect(MONGODB_URI, {
     useFindAndModify: false,
     useUnifiedTopology: true
 });
+mongoose.Promise = global.Promise;
+
+
+app.use(session({
+    secret: 'my-secret',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: MONGODB_URI })
+}));
 
 // routes
 app.use(require("./routes/api.js"));
