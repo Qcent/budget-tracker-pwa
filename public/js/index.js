@@ -133,8 +133,13 @@ function sendTransaction(isAdding) {
             }
         })
         .catch(err => {
-            alert('Currently unable to connect to server:\n\nThis transaction will not be visible on other devices until your internet connection is restored.')
-                // fetch failed, so save in indexed db
+            // alert user of connection error
+            document.querySelector(".form .error").innerHTML =
+                `<span class='tooltip'>Currently unable to Sync with server❗
+                <span class="tooltiptext">This transaction will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
+                </span></span>`;
+
+            // fetch failed, so save in indexed db
             saveRecord(transaction);
 
             // clear form
