@@ -2,16 +2,28 @@ let transactions = [];
 let myChart;
 
 const queryServer = () => fetch("/api/transaction")
-    .then(response => {
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         // save db data on global variable
         transactions = data;
+        // also save in localStorage for offline recall
+        localStorage.transactions = JSON.stringify(transactions);
 
         populateTotal();
         populateTable();
         populateChart();
+    })
+    .catch(err => {
+        console.log(err);
+        console.log("(NETWORK ERROR?) trying localStorage ...");
+        transactions = JSON.parse(localStorage.transactions);
+
+        if (transactions.length) {
+            console.log("Success!");
+            populateTotal();
+            populateTable();
+            populateChart();
+        } else { console.log("No Transactions Found!"); }
     });
 
 function populateTotal() {
@@ -135,7 +147,7 @@ function sendTransaction(isAdding) {
         .catch(err => {
             // alert user of connection error
             document.querySelector(".form .error").innerHTML =
-                `<span class='tooltip'>Currently unable to Sync with server❗
+                `<span class='tooltip'>Currently unable to sync with server❗
                 <span class="tooltiptext">This transaction will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
                 </span></span>`;
 
