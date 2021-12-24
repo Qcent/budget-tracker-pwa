@@ -103,10 +103,27 @@ const UserFunctions = {
 
 
     // createUser
-    createUser({ body }, res) {
+    createUser({ body, session }, res) {
+        console.log("=========== NEW USER SUBMITTED! =============");
+        console.log(body);
         User.create(body)
-            .then(dbUserData => res.json(dbUserData))
-            .catch(err => res.status(400).json(err));
+            .then(dbUserData => {
+                session.save(() => {
+                    // declare session variables for instant login
+                    session.userId = dbUserData._id;
+                    session.username = dbUserData.username;
+                    session.loggedIn = true;
+
+                    res.json({ user: dbUserData, message: 'You are now logged in!' });
+                    console.log("=========== NEW USER CREATED! =============");
+                });
+
+            })
+            .catch(err => {
+                console.log("=========== FAILED! =============");
+                console.log(err)
+                res.status(400).json(err)
+            });
     },
 
     // update User by id
@@ -133,7 +150,7 @@ const UserFunctions = {
                 console.log('***********DELETING USER*************');
                 console.log(dbUserData);
 
-                res.json(dbUserData);
+                res.json({ dbUserData, deleted: 'true' });
             })
             .catch(err => res.status(400).json(err));
     },

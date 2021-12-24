@@ -21,8 +21,17 @@
     <header>
         <nav>
             <span id='loginNav' class='navlink' onclick="$('#loginModal').modal('show')">Login</span>
-            <span id='logoutNav' class='navlink' onclick="fetch(`/api/user/logout`).then(()=> logoutUser())">Logout</span>
-            <span id='usernameNav'>User</span>
+
+            <div class="dropdown" id='logoutNav'>
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span id='usernameNav'>User</span>
+                </button>
+                <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#" onclick="logoutUser()">Logout</a>
+                    <a class="dropdown-item" href="#" onclick="resetBudget()">Reset Budget</a>
+                    <a class="dropdown-item" href="#" onclick="removeUserAccount()">Delete Acount</a>
+                </div>
+            </div>
         </nav>
     </header>
     <div class="wrapper">
@@ -64,7 +73,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class='modalError' id='login-error'> Error goes here </div>
+                    <div class='modalError' id='login-error'> Error! </div>
                     <form action="/api/user/login" method="POST" name='user-login-form' id='user-login-form'>
                         <div class="form-group">
                             <label for="user-email" class="col-form-label">Email:</label>
@@ -93,7 +102,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class='modalError' id='signup-error'> Error goes here </div>
+                    <div class='modalError' id='signup-error'> Error! </div>
                     <form action="/api/users" method="POST" name='user-signup-form' id='user-signup-form'>
                         <div class="form-group">
                             <label for="user-username" class="col-form-label">Username:</label>

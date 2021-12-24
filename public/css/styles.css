@@ -83,6 +83,7 @@ nav {
     justify-content: flex-end;
     gap: 1rem;
     margin-right: 1.2rem;
+    margin-top: .3rem;
 }
 
 .navlink {

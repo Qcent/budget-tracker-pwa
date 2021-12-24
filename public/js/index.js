@@ -28,7 +28,7 @@ function eraseCookie(name) {
     createCookie(name, "", -1);
 }
 
-// get the transactions
+// get the transactions by userId
 const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("userId"), {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -65,7 +65,7 @@ const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("u
         } else { console.log("No Transactions Found!"); }
     });
 
-//fill out the chart
+//fill out the the onscreen info total/table/chart
 function populateTotal() {
     // reduce transaction amounts to a single total value
     let total = transactions.reduce((total, t) => {
@@ -285,33 +285,57 @@ document.querySelector('#user-signup-form').addEventListener('submit', signupFor
 
 // adds a small delay before reloading the page so cookies can be set and proper info displayed
 const delayedReload = (milsec = 100) => {
-        // wait a small delay for the cookies to be set
-        setTimeout(() => {
-            location.reload(true);
-        }, milsec);
-    }
-    // clears cookies on logout to prevent server/client sync delays
+    // wait a small delay for the cookies to be set
+    setTimeout(() => {
+        location.reload(true);
+    }, milsec);
+};
+
+// clears cookies on logout to prevent server/client sync delays
 const logoutUser = () => {
-    eraseCookie('loggedIn');
-    eraseCookie('userId');
-    eraseCookie('username');
-    delayedReload();
-}
+    fetch(`/api/user/logout`).then(() => {
+        eraseCookie('loggedIn');
+        eraseCookie('userId');
+        eraseCookie('username');
+        delayedReload();
+    })
+};
 
 // helper functions to focus first element in form on modal appearance
 $('#loginModal').on('shown.bs.modal', function() {
     $('#user-login-email').focus();
 });
 $('#signupModal').on('shown.bs.modal', function() {
-        $('#user-signup-name').focus();
-    })
-    // helper functions to hide error message on modal disapearance
+    $('#user-signup-name').focus();
+});
+// helper functions to hide error message on modal disapearance
 $('#loginModal').on('hidden.bs.modal', function() {
     $('#login-error').hide();
 });
 $('#signupModal').on('hidden.bs.modal', function() {
     $('#signup-error').hide();
-})
+});
+
+// remove an account/user/budget from the database
+const removeUserAccount = async() => {
+    let Response = await fetch('/api/user', {
+        method: "DELETE",
+        body: JSON.stringify({ userId: readCookie('userId') }),
+        headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+        }
+    });
+    const response = await Response.json();
+    console.log(response);
+    if (response.deleted === 'true') {
+        logoutUser();
+    } else {
+        const { message: errMsg } = response;
+        console.log("DELETE Error!");
+        console.log(errMsg);
+    }
+}
 
 // get the transactions
 queryServer();
