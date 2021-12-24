@@ -52,6 +52,15 @@ tr:nth-child(even) {
     margin: 0 auto;
 }
 
+
+/* modal stuff */
+
+.modalError {
+    color: red;
+    text-align: center;
+    display: none;
+}
+
 .form-btn {
     cursor: pointer;
     background-color: #E5E5E5;
@@ -60,6 +69,10 @@ tr:nth-child(even) {
     border-style: solid;
     border-radius: 3px;
     border-image: initial;
+}
+
+.form-btn:hover {
+    background-color: #DDDDDD;
 }
 
 

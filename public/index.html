@@ -64,6 +64,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class='modalError' id='login-error'> Error goes here </div>
                     <form action="/api/user/login" method="POST" name='user-login-form' id='user-login-form'>
                         <div class="form-group">
                             <label for="user-email" class="col-form-label">Email:</label>
@@ -73,7 +74,7 @@
                             <input type="password" class="form-control" id="user-login-password" name='password'>
 
                             <input type="submit" style="margin: 1rem 4rem 0 12rem; display: inline-block;" value="Login">
-                            <span class='form-btn' onclick="showSignup()"> Signup </span>
+                            <span class='form-btn' onclick="showSignup()" tabindex="0"> Signup </span>
                         </div>
                     </form>
                 </div>
@@ -92,6 +93,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <div class='modalError' id='signup-error'> Error goes here </div>
                     <form action="/api/users" method="POST" name='user-signup-form' id='user-signup-form'>
                         <div class="form-group">
                             <label for="user-username" class="col-form-label">Username:</label>

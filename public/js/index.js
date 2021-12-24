@@ -1,7 +1,6 @@
 let transactions = [];
 let myChart;
 
-
 // Cookies
 function createCookie(name, value, days) {
     if (days) {
@@ -29,6 +28,7 @@ function eraseCookie(name) {
     createCookie(name, "", -1);
 }
 
+// get the transactions
 const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("userId"), {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -65,6 +65,7 @@ const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("u
         } else { console.log("No Transactions Found!"); }
     });
 
+//fill out the chart
 function populateTotal() {
     // reduce transaction amounts to a single total value
     let total = transactions.reduce((total, t) => {
@@ -129,6 +130,7 @@ function populateChart() {
     });
 }
 
+// submit a transaction to the database
 function sendTransaction(isAdding) {
     let nameEl = document.querySelector("#t-name");
     let amountEl = document.querySelector("#t-amount");
@@ -202,19 +204,24 @@ function sendTransaction(isAdding) {
         });
 }
 
+// set the button click listeners
 document.querySelector("#add-btn").onclick = function() {
     sendTransaction(true);
 };
-
 document.querySelector("#sub-btn").onclick = function() {
     sendTransaction(false);
 };
 
+//displays the sign up modal
 const showSignup = () => {
+    $('#user-signup-email').val($('#user-login-email').val());
+    $('#user-signup-password').val($('#user-login-password').val());
+
     $('#loginModal').modal('hide');
     $('#signupModal').modal('show');
 }
 
+// submits the user login
 async function loginFormHandler(event) {
     event.stopImmediatePropagation();
     event.preventDefault();
@@ -240,12 +247,16 @@ async function loginFormHandler(event) {
         delayedReload(300);
 
     } else {
-        console.log("Sign in Error!")
+        const { message: errMsg } = await response.json();
+        console.log("Login Error!");
+        $('#login-error').text(errMsg);
+        $('#login-error').show();
     }
 }
-
+// listener for the login submission
 document.querySelector('#user-login-form').addEventListener('submit', loginFormHandler);
 
+// submits the user signup
 async function signupFormHandler(event) {
     event.stopImmediatePropagation();
     event.preventDefault();
@@ -263,16 +274,23 @@ async function signupFormHandler(event) {
     if (response.ok) {
         location.reload();
     } else {
-        console.log("Signup Error!")
+        const { message: errMsg } = await response.json();
+        console.log("Signup Error!");
+        $('#signup-error').text(errMsg);
+        $('#signup-error').show();
     }
 }
-document.querySelector('#user-login-form').addEventListener('submit', signupFormHandler);
-const delayedReload = (milsec = 300) => {
-    // wait a small delay for the cookies to be set
-    setTimeout(() => {
-        location.reload(true);
-    }, milsec);
-}
+// listener for the signup submission
+document.querySelector('#user-signup-form').addEventListener('submit', signupFormHandler);
+
+// adds a small delay before reloading the page so cookies can be set and proper info displayed
+const delayedReload = (milsec = 100) => {
+        // wait a small delay for the cookies to be set
+        setTimeout(() => {
+            location.reload(true);
+        }, milsec);
+    }
+    // clears cookies on logout to prevent server/client sync delays
 const logoutUser = () => {
     eraseCookie('loggedIn');
     eraseCookie('userId');
@@ -280,8 +298,25 @@ const logoutUser = () => {
     delayedReload();
 }
 
+// helper functions to focus first element in form on modal appearance
+$('#loginModal').on('shown.bs.modal', function() {
+    $('#user-login-email').focus();
+});
+$('#signupModal').on('shown.bs.modal', function() {
+        $('#user-signup-name').focus();
+    })
+    // helper functions to hide error message on modal disapearance
+$('#loginModal').on('hidden.bs.modal', function() {
+    $('#login-error').hide();
+});
+$('#signupModal').on('hidden.bs.modal', function() {
+    $('#signup-error').hide();
+})
+
+// get the transactions
 queryServer();
 
+// no template engine so use javascript and cookies to display dynamic info to user
 if (readCookie('loggedIn') === 'true') {
     document.querySelector("#usernameNav").textContent = readCookie('username');
     $(document.querySelector('#loginNav')).hide();

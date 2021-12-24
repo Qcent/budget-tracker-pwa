@@ -9,7 +9,10 @@ const UserSchema = new Schema({
         trim: true,
         unique: true
     },
-    password: { type: String, required: true },
+    password: {
+        type: String,
+        required: [true, "You must supply a password!"]
+    },
     email: {
         type: String,
         trim: true,
