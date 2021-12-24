@@ -337,6 +337,34 @@ const removeUserAccount = async() => {
     }
 }
 
+// remove all transactions from a budget/user
+const resetBudget = async() => {
+    let Response = await fetch('/api/user/transactions', {
+        method: "DELETE",
+        body: JSON.stringify({ userId: readCookie('userId') }),
+        headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+        }
+    });
+    const response = await Response.json();
+    if (response.reset === 'true') {
+        // blank our local transactions
+        transactions = [];
+        // also update localStorage
+        localStorage.transactions = JSON.stringify(transactions);
+        populateTotal();
+        populateTable();
+        populateChart();
+
+        console.log("Transactions reset!");
+    } else {
+        const { message: errMsg } = response;
+        console.log("RESET Error!");
+        console.log(errMsg);
+    }
+}
+
 // get the transactions
 queryServer();
 

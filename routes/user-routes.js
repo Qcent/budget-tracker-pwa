@@ -71,7 +71,6 @@ const UserFunctions = {
                     return;
                 }
                 // just the transactions array is needed
-                //res.json(dbUserData.transactions.reverse());
                 dbUserData.transactions.forEach(item => {
                     Transaction.findOneAndDelete({ _id: item._id })
                         .then(deletedTransaction => {
@@ -86,7 +85,7 @@ const UserFunctions = {
                 });
 
                 User.findOneAndUpdate({ _id: body.userId }, { transactions: [] }, { new: true, runValidators: true })
-                    .then(message => res.json(message))
+                    .then(reponse => res.json({ reponse, reset: 'true' }))
                     .catch(err => {
                         console.log(err);
                         res.status(400).json(err);
