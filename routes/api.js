@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { User, Transaction } = require('../models');
-const withAuth = require('../utils/auth');
+const { withAuth, sameUser } = require('../utils/auth');
 
 /* USER ROUTES */
 
@@ -18,20 +18,20 @@ const {
 
 // /api/users
 router.route('/api/users').get(withAuth, getAllUsers).post(createUser);
-router.route('/api/user').get(withAuth, getUserById).put(withAuth, updateUser).delete(withAuth, deleteUser);
+router.route('/api/user').get(withAuth, getUserById).put(sameUser, updateUser).delete(sameUser, deleteUser);
 
 router.route('/api/user/login').post(userLogin);
 router.route('/api/user/logout').get(userLogout);
 
-router.route('/api/user/transactions').get(getUsersTransactions).delete(withAuth, deleteUsersTransactions);
+router.route('/api/user/transactions').get(sameUser, getUsersTransactions).delete(sameUser, deleteUsersTransactions);
 
 /******************** */
 /* TRANSACTION ROUTES */
 /******************** */
-router.post("/api/transaction", withAuth, ({ body }, res) => {
+router.post("/api/transaction", withAuth, ({ body, session }, res) => {
     Transaction.create(body)
         .then(({ _id }) => {
-            return User.findOneAndUpdate({ _id: body.userId }, { $push: { transactions: _id } }, { new: true, runValidators: true });
+            return User.findOneAndUpdate({ _id: session.userId }, { $push: { transactions: _id } }, { new: true, runValidators: true });
         })
         .then(dbUserData => {
             if (!dbUserData) {

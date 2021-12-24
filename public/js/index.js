@@ -210,13 +210,6 @@ document.querySelector("#sub-btn").onclick = function() {
     sendTransaction(false);
 };
 
-if (readCookie('loggedIn') === 'true') {
-    document.querySelector("#usernameNav").textContent = readCookie('username');
-    $(document.querySelector('#loginNav')).hide();
-} else {
-    $(document.querySelector('#logoutNav')).hide();
-    $(document.querySelector('#usernameNav')).hide();
-}
 const showSignup = () => {
     $('#loginModal').modal('hide');
     $('#signupModal').modal('show');
@@ -225,8 +218,7 @@ const showSignup = () => {
 async function loginFormHandler(event) {
     event.stopImmediatePropagation();
     event.preventDefault();
-    //if(event.target.id = )
-    console.log(event.target.id);
+
     var form = document.querySelector('#user-login-form'); // give the form an ID
 
     let response = await fetch(form.action, {
@@ -238,7 +230,15 @@ async function loginFormHandler(event) {
         }
     });
     if (response.ok) {
-        location.reload();
+
+        const userInfo = await response.json()
+            // console.log(userInfo.user.username)  
+        createCookie('userId', userInfo.user._id);
+        createCookie('username', userInfo.user.username);
+        createCookie('loggedIn', 'true');
+        // wait a small delay for the cookies to be set
+        delayedReload(300);
+
     } else {
         console.log("Sign in Error!")
     }
@@ -267,5 +267,25 @@ async function signupFormHandler(event) {
     }
 }
 document.querySelector('#user-login-form').addEventListener('submit', signupFormHandler);
+const delayedReload = (milsec = 300) => {
+    // wait a small delay for the cookies to be set
+    setTimeout(() => {
+        location.reload(true);
+    }, milsec);
+}
+const logoutUser = () => {
+    eraseCookie('loggedIn');
+    eraseCookie('userId');
+    eraseCookie('username');
+    delayedReload();
+}
 
 queryServer();
+
+if (readCookie('loggedIn') === 'true') {
+    document.querySelector("#usernameNav").textContent = readCookie('username');
+    $(document.querySelector('#loginNav')).hide();
+} else {
+    $(document.querySelector('#logoutNav')).hide();
+    $(document.querySelector('#usernameNav')).hide();
+}

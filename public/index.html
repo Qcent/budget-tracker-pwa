@@ -21,7 +21,7 @@
     <header>
         <nav>
             <span id='loginNav' class='navlink' onclick="$('#loginModal').modal('show')">Login</span>
-            <span id='logoutNav' class='navlink' onclick="fetch(`/api/user/logout`).then(()=> location.reload())">Logout</span>
+            <span id='logoutNav' class='navlink' onclick="fetch(`/api/user/logout`).then(()=> logoutUser())">Logout</span>
             <span id='usernameNav'>User</span>
         </nav>
     </header>

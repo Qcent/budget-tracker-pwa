@@ -44,17 +44,18 @@ app.use(function(req, res, next) {
     } else {
         res.cookie('loggedIn', req.session.loggedIn, { maxAge: -1, httpOnly: true });
         res.cookie('username', '', { maxAge: -1, httpOnly: true });
-        // res.cookie('userId', '', { maxAge: -1, httpOnly: true });
+        res.cookie('userId', '', { maxAge: -1, httpOnly: true });
     }
     next(); // <-- important!
 });
 
 // if no user is specified use the globalUser // no login
 const globalUserId = "61c5e68a699a28529f231281";
-app.use(function({ body, query }, res, next) {
+app.use(function({ body, query, session }, res, next) {
     // check login
     if (query.userId === 'null') {
         query.userId = globalUserId;
+        if (!session.loggedIn) { session.userId = globalUserId; }
     }
     if (!body.userId || body.userId == '') {
         body.userId = globalUserId;

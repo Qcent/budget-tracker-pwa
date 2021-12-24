@@ -1,6 +1,5 @@
 const withAuth = (req, res, next) => {
-    if (req.body.userId = "61c5e68a699a28529f231281") { next(); return; }
-    if (!req.session.userId) {
+    if (!req.session.loggedIn) {
         // res.redirect('/login');
         res.status(401).json({ message: 'Unauthorized Request, Please Login!' });
     } else {
@@ -8,4 +7,13 @@ const withAuth = (req, res, next) => {
     }
 };
 
-module.exports = withAuth;
+const sameUser = (req, res, next) => {
+    if (req.session.userId === req.body.userId || req.session.userId === req.query.userId) {
+        next();
+
+    } else {
+        res.status(401).json({ message: 'Unauthorized Request! User Mismatch!' });
+    }
+};
+
+module.exports = { withAuth, sameUser }

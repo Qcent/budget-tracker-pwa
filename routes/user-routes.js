@@ -32,8 +32,8 @@ const UserFunctions = {
     },
 
     // get one Users Transactions
-    getUsersTransactions({ query }, res) {
-        User.findOne({ _id: query.userId })
+    getUsersTransactions({ session }, res) {
+        User.findOne({ _id: session.userId })
             .lean() // no virtuals
             .select('-_id') // no id
             .select('transactions') // just the transactions
@@ -43,7 +43,7 @@ const UserFunctions = {
             })
             .then(dbUserData => {
                 if (!dbUserData) {
-                    res.status(404).json({ message: 'No User found with this id! : ' + query.userId });
+                    res.status(404).json({ message: 'No User found with this id! : ' + session.userId });
                     return;
                 }
                 // just the transactions array is returned in reverse order
