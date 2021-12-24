@@ -7,7 +7,7 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 
-const { yearsFromNow } = require('./utils/yearsFromNow');
+const yearsFromNow = require('./utils/yearsFromNow');
 
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget";
@@ -44,9 +44,22 @@ app.use(function(req, res, next) {
     } else {
         res.cookie('loggedIn', req.session.loggedIn, { maxAge: -1, httpOnly: true });
         res.cookie('username', '', { maxAge: -1, httpOnly: true });
-        res.cookie('userId', '', { maxAge: -1, httpOnly: true });
+        // res.cookie('userId', '', { maxAge: -1, httpOnly: true });
     }
     next(); // <-- important!
+});
+
+// if no user is specified use the globalUser // no login
+const globalUserId = "61c5e68a699a28529f231281";
+app.use(function({ body, query }, res, next) {
+    // check login
+    if (query.userId === 'null') {
+        query.userId = globalUserId;
+    }
+    if (!body.userId || body.userId == '') {
+        body.userId = globalUserId;
+    }
+    next();
 });
 
 app.use(express.static("public"));

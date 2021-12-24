@@ -146,7 +146,8 @@ function sendTransaction(isAdding) {
     let transaction = {
         name: nameEl.value,
         value: amountEl.value,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        userId: readCookie('userId')
     };
 
     // if subtracting funds, convert amount to negative number

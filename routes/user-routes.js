@@ -2,7 +2,7 @@ const { User, Transaction } = require('../models');
 
 const UserFunctions = {
     // get all Users
-    getAllUser(req, res) {
+    getAllUsers(req, res) {
         User.find({})
             .select('-__v')
             .sort({ _id: -1 })
@@ -110,8 +110,8 @@ const UserFunctions = {
     },
 
     // update User by id
-    updateUser({ body }, res) {
-        User.findOneAndUpdate({ _id: body.userId }, body, { new: true, runValidators: true })
+    updateUser({ body, query }, res) {
+        User.findOneAndUpdate({ _id: query.userId }, body, { new: true, runValidators: true })
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.status(404).json({ message: 'No User found with this id!' });

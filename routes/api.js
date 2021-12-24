@@ -6,8 +6,9 @@ const withAuth = require('../utils/auth');
 
 const {
     getUserById,
-    getAllUser,
+    getAllUsers,
     createUser,
+    updateUser,
     deleteUser,
     getUsersTransactions,
     deleteUsersTransactions,
@@ -16,13 +17,13 @@ const {
 } = require('./user-routes');
 
 // /api/users
-router.route('/api/users').get(withAuth, getAllUser).post(createUser);
-router.route('/api/user').get(withAuth, getUserById).delete(deleteUser);
+router.route('/api/users').get(withAuth, getAllUsers).post(createUser);
+router.route('/api/user').get(withAuth, getUserById).put(withAuth, updateUser).delete(withAuth, deleteUser);
 
 router.route('/api/user/login').post(userLogin);
 router.route('/api/user/logout').get(userLogout);
 
-router.route('/api/user/transactions').get(withAuth, getUsersTransactions).delete(withAuth, deleteUsersTransactions);
+router.route('/api/user/transactions').get(getUsersTransactions).delete(withAuth, deleteUsersTransactions);
 
 /******************** */
 /* TRANSACTION ROUTES */
