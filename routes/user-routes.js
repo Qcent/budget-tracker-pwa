@@ -5,6 +5,7 @@ const UserFunctions = {
     getAllUsers(req, res) {
         User.find({})
             .select('-__v')
+            .select('-password')
             .sort({ _id: -1 })
             .then(dbUserData => res.json(dbUserData))
             .catch(err => {
@@ -18,6 +19,7 @@ const UserFunctions = {
         User.findOne({ _id: body.userId })
             .populate({ path: 'transactions', select: '-__v' })
             .select('-__v')
+            .select('-password')
             .then(dbUserData => {
                 if (!dbUserData) {
                     res.status(404).json({ message: `No User found with this id! : ${body.userId}` });
