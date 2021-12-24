@@ -1,7 +1,46 @@
 let transactions = [];
 let myChart;
 
-const queryServer = () => fetch("/api/transaction")
+
+// Cookies
+function createCookie(name, value, days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        var expires = "; expires=" + date.toGMTString();
+    } else var expires = "";
+
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name, "", -1);
+}
+
+const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("userId"), {
+        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: 'same-origin', // include, *same-origin, omit
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        //body: JSON.stringify({ userId: "61c4ec8d5eb0ba3c8f7fdcac" }) // body data type must match "Content-Type" header
+    })
     .then(response => response.json())
     .then(data => {
         // save db data on global variable
@@ -169,5 +208,63 @@ document.querySelector("#add-btn").onclick = function() {
 document.querySelector("#sub-btn").onclick = function() {
     sendTransaction(false);
 };
+
+if (readCookie('loggedIn') === 'true') {
+    document.querySelector("#usernameNav").textContent = readCookie('username');
+    $(document.querySelector('#loginNav')).hide();
+} else {
+    $(document.querySelector('#logoutNav')).hide();
+    $(document.querySelector('#usernameNav')).hide();
+}
+const showSignup = () => {
+    $('#loginModal').modal('hide');
+    $('#signupModal').modal('show');
+}
+
+async function loginFormHandler(event) {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    //if(event.target.id = )
+    console.log(event.target.id);
+    var form = document.querySelector('#user-login-form'); // give the form an ID
+
+    let response = await fetch(form.action, {
+        method: "POST",
+        body: JSON.stringify({ email: form.email.value, password: form.password.value }),
+        headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+        }
+    });
+    if (response.ok) {
+        location.reload();
+    } else {
+        console.log("Sign in Error!")
+    }
+}
+
+document.querySelector('#user-login-form').addEventListener('submit', loginFormHandler);
+
+async function signupFormHandler(event) {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+
+    var form = document.querySelector('#user-signup-form'); // give the form an ID
+
+    let response = await fetch(form.action, {
+        method: "POST",
+        body: JSON.stringify({ username: form.username.value, email: form.email.value, password: form.password.value }),
+        headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+        }
+    });
+    if (response.ok) {
+        location.reload();
+    } else {
+        console.log("Signup Error!")
+    }
+}
+document.querySelector('#user-login-form').addEventListener('submit', signupFormHandler);
 
 queryServer();

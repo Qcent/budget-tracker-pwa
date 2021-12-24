@@ -32,8 +32,8 @@ const UserFunctions = {
     },
 
     // get one Users Transactions
-    getUsersTransactions({ body }, res) {
-        User.findOne({ _id: body.userId })
+    getUsersTransactions({ query }, res) {
+        User.findOne({ _id: query.userId })
             .lean() // no virtuals
             .select('-_id') // no id
             .select('transactions') // just the transactions
@@ -43,7 +43,7 @@ const UserFunctions = {
             })
             .then(dbUserData => {
                 if (!dbUserData) {
-                    res.status(404).json({ message: 'No User found with this id!' });
+                    res.status(404).json({ message: 'No User found with this id! : ' + query.userId });
                     return;
                 }
                 // just the transactions array is returned in reverse order
@@ -140,7 +140,7 @@ const UserFunctions = {
 
     userLogin({ body, session }, res) {
         console.log("*************** LOGIN ATTEMPT ***************");
-
+        console.log(body)
         if (session.loggedIn) {
             console.log("ALREADY LOGGED IN!")
             res.status(400).json({ message: 'ALREADY LOGGED IN!' });

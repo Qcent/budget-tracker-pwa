@@ -52,6 +52,30 @@ tr:nth-child(even) {
     margin: 0 auto;
 }
 
+.form-btn {
+    cursor: pointer;
+    background-color: #E5E5E5;
+    padding: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 3px;
+    border-image: initial;
+}
+
+
+/* navLinks */
+
+nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-right: 1.2rem;
+}
+
+.navlink {
+    cursor: pointer;
+}
+
 
 /* Tooltip container */
 
