@@ -190,9 +190,14 @@ function sendTransaction(isAdding) {
         })
         .catch(err => {
             // alert user of connection error
-            document.querySelector(".form .error").innerHTML =
-                `<span class='tooltip'>Currently unable to sync with server❗
+            /*
+            <span class='tooltip'>Currently unable to sync with server❗
                 <span class="tooltiptext">This transaction will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
+                </span></span>
+                */
+            document.querySelector(".form .error").innerHTML =
+                `<span class='tooltip2'>Currently unable to sync with server❗
+                <span class="tooltiptext2">This transaction will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
                 </span></span>`;
 
             // fetch failed, so save in indexed db

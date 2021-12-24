@@ -93,7 +93,7 @@ nav {
 
 /* Tooltip container */
 
-.tooltip {
+.tooltip2 {
     position: relative;
     display: inline-block;
 }
@@ -101,7 +101,7 @@ nav {
 
 /* Tooltip text */
 
-.tooltip .tooltiptext {
+.tooltip2 .tooltiptext2 {
     visibility: hidden;
     width: 17rem;
     background-color: rgb(219, 83, 83);
@@ -118,6 +118,6 @@ nav {
 
 /* Show the tooltip text when you mouse over the tooltip container */
 
-.tooltip:hover .tooltiptext {
+.tooltip2:hover .tooltiptext2 {
     visibility: visible;
 }
