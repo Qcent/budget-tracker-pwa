@@ -7,6 +7,8 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 
+const { yearsFromNow } = require('./utils/yearsFromNow');
+
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget";
 
@@ -36,13 +38,13 @@ app.use(cookieParser('my-secret'))
 app.use(function(req, res, next) {
     // check login
     if (req.session.loggedIn === true) {
-        res.cookie('loggedIn', req.session.loggedIn, { maxAge: 900000, httpOnly: false });
-        res.cookie('username', req.session.username, { maxAge: 900000, httpOnly: false });
-        res.cookie('userId', req.session.userId, { maxAge: 900000, httpOnly: false });
+        res.cookie('loggedIn', req.session.loggedIn, { expires: yearsFromNow(1), httpOnly: false });
+        res.cookie('username', req.session.username, { expires: yearsFromNow(1), httpOnly: false });
+        res.cookie('userId', req.session.userId, { expires: yearsFromNow(1), httpOnly: false });
     } else {
-        res.cookie('loggedIn', req.session.loggedIn, { maxAge: 900000, httpOnly: false });
-        res.cookie('username', '', { maxAge: 900000, httpOnly: false });
-        res.cookie('userId', '', { maxAge: 900000, httpOnly: false });
+        res.cookie('loggedIn', req.session.loggedIn, { maxAge: -1, httpOnly: true });
+        res.cookie('username', '', { maxAge: -1, httpOnly: true });
+        res.cookie('userId', '', { maxAge: -1, httpOnly: true });
     }
     next(); // <-- important!
 });
