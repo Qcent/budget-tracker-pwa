@@ -9,9 +9,9 @@ const FILES_TO_CACHE = [
     "./css/styles.css",
     "./icons/icon-192x192.png",
     "./icons/icon-144x144.png",
+    "./icons/trash-svgrepo-com.svg",
     "./js/idb.js",
     "./js/index.js",
-
 ];
 
 self.addEventListener('install', function(e) {

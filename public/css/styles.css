@@ -52,6 +52,24 @@ tr:nth-child(even) {
     margin: 0 auto;
 }
 
+.deletable {
+    background-color: #e76262 !important;
+}
+
+.del-icon {
+    content: url(/icons/trash-svgrepo-com.svg);
+    width: 1.3rem;
+    height: 1.3rem;
+    margin-top: .15rem;
+    float: right;
+    opacity: 0;
+}
+
+.deletable .del-icon {
+    opacity: 1;
+    cursor: pointer;
+}
+
 
 /* modal stuff */
 

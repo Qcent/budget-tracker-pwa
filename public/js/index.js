@@ -80,11 +80,14 @@ function populateTable() {
     let tbody = document.querySelector("#tbody");
     tbody.innerHTML = "";
 
-    transactions.forEach(transaction => {
+    transactions.forEach((transaction, idx) => {
         // create and populate a table row
         let tr = document.createElement("tr");
+        tr.setAttribute('ondblclick', "setDeleteTransaction(this)");
         tr.innerHTML = `
-      <td>${transaction.name}</td>
+      <td>${transaction.name}
+          <img class='del-icon' onclick="removeTransaction(this,'${transaction._id}', '${idx}')">
+      </td>
       <td>${transaction.value}</td>
     `;
 
@@ -335,7 +338,7 @@ const removeUserAccount = async() => {
         console.log("DELETE Error!");
         console.log(errMsg);
     }
-}
+};
 
 // remove all transactions from a budget/user
 const resetBudget = async() => {
@@ -363,7 +366,49 @@ const resetBudget = async() => {
         console.log("RESET Error!");
         console.log(errMsg);
     }
-}
+};
+
+//on double click allow transactions to be deleted
+function setDeleteTransaction(el) {
+    //console.log(el.getAttribute('data-id'));
+    el.classList.add('deletable');
+
+    document.addEventListener('click', noDeleteClickHandler = function(e) {
+        if (e.target !== el) {
+            el.classList.remove('deletable');
+        }
+        document.removeEventListener('click', noDeleteClickHandler);
+    });
+};
+
+
+async function removeTransaction(el, id, idx) {
+    if (el.closest("tr").classList.contains('deletable')) {
+        // send fetch request to remove transaction
+        let response = await fetch("/api/transaction", {
+            method: "DELETE",
+            body: JSON.stringify({ id: id, userId: readCookie('userId') }),
+            headers: {
+                Accept: "application/json, text/plain, */*",
+                "Content-Type": "application/json"
+            }
+        });
+        response = await response.json();
+        if (response.ok === 'true') {
+            //remove transaction from local variable and DB
+            transactions.splice(idx, 1);
+            localStorage.transactions = JSON.stringify(transactions);
+            // update screen
+            populateTotal();
+            populateTable();
+            populateChart();
+            //
+        } else {
+            console.log("Transaction Remove Error!");
+            console.log(response);
+        }
+    }
+};
 
 // get the transactions
 queryServer();

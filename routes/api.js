@@ -52,7 +52,7 @@ router.post("/api/transaction", withAuth, ({ body, session }, res) => {
                 res.status(404).json({ message: 'No User found with this id!' });
                 return;
             }
-            console.log(dbUserData)
+            //console.log(dbUserData)
             res.json(dbUserData);
         })
         .catch(err => res.json(err));
@@ -93,7 +93,7 @@ router.delete("/api/transaction", withAuth, (req, res) => {
                 res.status(404).json({ message: 'No User found with this id!' });
                 return;
             }
-            res.json(dbUserData);
+            res.json({ ok: 'true' });
         })
         .catch(err => res.json(err));
 });
