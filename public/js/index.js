@@ -10,7 +10,7 @@ function createCookie(name, value, days) {
     } else var expires = "";
 
     document.cookie = name + "=" + value + expires + "; path=/";
-}
+};
 
 function readCookie(name) {
     var nameEQ = name + "=";
@@ -22,18 +22,24 @@ function readCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
-}
+};
 
 function eraseCookie(name) {
     createCookie(name, "", -1);
-}
+};
 alertSyncError = () => {
-        document.querySelector(".form .error").innerHTML =
-            `<span class='tooltip2'>Currently unable to sync with server❗
+    document.querySelector(".form .error").innerHTML =
+        `<span class='tooltip2'>Currently unable to sync with server❗
     <span class="tooltiptext2">Transactions you add/remove will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
     </span></span>`;
-    }
-    // get the transactions by userId
+};
+alertSyncError2 = () => {
+    document.querySelector(".form .error").innerHTML =
+        `<span class='tooltip2'>Currently unable to sync with server❗
+    <span class="tooltiptext2">User Account functions are unavailable until a connection is restored.
+    </span></span>`;
+};
+// get the transactions by userId
 const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("userId"), {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -58,7 +64,7 @@ const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("u
         populateChart();
     })
     .catch(err => {
-        console.log(err);
+        //console.log(err);
         console.log("(NETWORK ERROR?) trying localStorage ...");
         transactions = JSON.parse(localStorage.transactions);
 
@@ -299,11 +305,17 @@ const delayedReload = (milsec = 100) => {
 // clears cookies on logout to prevent server/client sync delays
 const logoutUser = () => {
     fetch(`/api/user/logout`).then(() => {
-        eraseCookie('loggedIn');
-        eraseCookie('userId');
-        eraseCookie('username');
-        delayedReload();
-    })
+            eraseCookie('loggedIn');
+            eraseCookie('userId');
+            eraseCookie('username');
+            delayedReload();
+        })
+        .catch(err => {
+            console.log("Unable to Logout / Switch Accounts during network Outage!");
+            alertSyncError2();
+            //console.log(err);
+        });
+
 };
 
 // helper functions to focus first element in form on modal appearance
@@ -323,58 +335,71 @@ $('#signupModal').on('hidden.bs.modal', function() {
 
 // remove an account/user/budget from the database
 const removeUserAccount = async() => {
-    let Response = await fetch('/api/user', {
-        method: "DELETE",
-        body: JSON.stringify({ userId: readCookie('userId') }),
-        headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json"
-        }
-    });
-    const response = await Response.json();
-    console.log(response);
-    if (response.deleted === 'true') {
-        logoutUser();
-    } else {
-        const { message: errMsg } = response;
-        console.log("DELETE Error!");
-        console.log(errMsg);
-    }
+    fetch('/api/user', {
+            method: "DELETE",
+            body: JSON.stringify({ userId: readCookie('userId') }),
+            headers: {
+                Accept: "application/json, text/plain, */*",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            response = response.json();
+            if (response.deleted === 'true') {
+                logoutUser();
+            } else {
+                const { message: errMsg } = response;
+                console.log("SOMETHING WENT WRONG!");
+                console.log(errMsg);
+            }
+        })
+        .catch(err => {
+            console.log("Unable to Delete Account during network Outage!");
+            alertSyncError2();
+            //console.log(err);
+        });
 };
 
 // remove all transactions from a budget/user
 const resetBudget = async() => {
-    let Response = await fetch('/api/user/transactions', {
-        method: "DELETE",
-        body: JSON.stringify({ userId: readCookie('userId') }),
-        headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json"
-        }
-    });
-    const response = await Response.json();
-    if (response.reset === 'true') {
-        // blank our local transactions
-        transactions = [];
-        // also update localStorage
-        localStorage.transactions = JSON.stringify(transactions);
-        populateTotal();
-        populateTable();
-        populateChart();
+    fetch('/api/user/transactions', {
+            method: "DELETE",
+            body: JSON.stringify({ userId: readCookie('userId') }),
+            headers: {
+                Accept: "application/json, text/plain, */*",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            response = response.json();
+            if (response.reset === 'true') {
+                // blank our local transactions
+                transactions = [];
+                // also update localStorage
+                localStorage.transactions = JSON.stringify(transactions);
+                populateTotal();
+                populateTable();
+                populateChart();
 
-        console.log("Transactions reset!");
-    } else {
-        const { message: errMsg } = response;
-        console.log("RESET Error!");
-        console.log(errMsg);
-    }
+                console.log("Transactions reset!");
+            } else {
+                const { message: errMsg } = response;
+                console.log("SOMETHING WENT WRONG!");
+                console.log(errMsg);
+            }
+        })
+        .catch(err => {
+            console.log("Unable to RESET during network Outage!");
+            alertSyncError2();
+            //console.log(err);
+        });
+
 };
 
 //on double click allow transactions to be deleted
 function setDeleteTransaction(el) {
-    //console.log(el.getAttribute('data-id'));
     el.classList.add('deletable');
-
+    //if anything other then the transaction table row is clicked on remove the deletable status
     document.addEventListener('click', noDeleteClickHandler = function(e) {
         if (e.target !== el) {
             el.classList.remove('deletable');
@@ -383,7 +408,7 @@ function setDeleteTransaction(el) {
     });
 };
 
-
+//remove a single transaction from the budget
 async function removeTransaction(el, id, idx) {
     if (el.closest("tr").classList.contains('deletable')) {
         //remove transaction from local variable and DB

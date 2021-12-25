@@ -54,7 +54,7 @@ self.addEventListener('fetch', function(e) {
                 // console.log('file is not cached, fetching : ' + e.request.url);
                 return fetch(e.request)
                     .catch(err => {
-                        console.log(err);
+                        // console.log(err);
                     });
             }
         })
