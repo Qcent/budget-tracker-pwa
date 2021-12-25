@@ -68,7 +68,7 @@ router.post("/api/transaction/bulk", withAuth, sameUser, ({ body }, res) => {
         });
 });
 
-router.get("/api/transaction", withAuth, (req, res) => {
+router.get("/api/transaction", (req, res) => {
     Transaction.find({}).sort({ date: -1 })
         .then(dbTransaction => {
             res.json(dbTransaction);
