@@ -78,24 +78,31 @@ router.get("/api/transaction", withAuth, (req, res) => {
         });
 });
 
-router.delete("/api/transaction", withAuth, (req, res) => {
-    Transaction.findOneAndDelete({ _id: req.body.id })
-        .then(deletedTransaction => {
-            if (!deletedTransaction) {
-                return res.status(404).json({ message: 'No Transaction with this id!' });
-            }
-            if (req.body.id) {
-                return User.findOneAndUpdate({ _id: req.body.userId }, { $pull: { transactions: req.body.id } }, { new: true, runValidators: true });
-            }
-        })
-        .then(dbUserData => {
-            if (!dbUserData) {
-                res.status(404).json({ message: 'No User found with this id!' });
-                return;
-            }
-            res.json({ ok: 'true' });
-        })
-        .catch(err => res.json(err));
+router.delete("/api/transaction", withAuth, ({ body }, res) => {
+    // when submitted from indexDB transData is an array of objects 
+    // so turn a single object into an array so this code will work in all cases
+    if (!Array.isArray(body)) body = [body];
+    body.forEach(transaction => {
+        //console.log(transaction.id)
+        Transaction.findOneAndDelete({ _id: transaction.id })
+            .then(deletedTransaction => {
+                if (!deletedTransaction) {
+                    return res.status(404).json({ message: 'No Transaction with this id! : ' + transaction.id });
+                }
+                if (transaction.id) {
+                    return User.findOneAndUpdate({ _id: transaction.userId }, { $pull: { transactions: transaction.id } }, { new: true, runValidators: true });
+                }
+            })
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No User found with this id!' });
+                    return;
+                }
+
+            })
+            .catch(err => res.json(err));
+    });
+    res.json({ ok: 'true' });
 });
 
 

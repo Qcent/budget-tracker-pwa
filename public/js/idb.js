@@ -8,6 +8,8 @@ request.onupgradeneeded = function(event) {
     const db = event.target.result;
     // create an object store (table) called `new_transaction`, set it to have an auto incrementing primary key of sorts 
     db.createObjectStore('new_transaction', { autoIncrement: true });
+    // create an object store (table) called `new_removal`, set it to have an auto incrementing primary key of sorts 
+    db.createObjectStore('new_removal', { autoIncrement: true });
 };
 
 // upon a successful 
@@ -27,13 +29,13 @@ request.onerror = function(event) {
 };
 
 // This function will be executed if we attempt to submit a new transaction and there's no internet connection
-function saveRecord(record) {
+function saveRecord(record, type = 'new_transaction') {
     //console.log(record);
     // open a new transaction with the database with read and write permissions 
-    const transaction = db.transaction(['new_transaction'], 'readwrite');
+    const transaction = db.transaction([type], 'readwrite');
 
     // access the object store for `new_transaction`
-    const transactionObjectStore = transaction.objectStore('new_transaction');
+    const transactionObjectStore = transaction.objectStore(type);
 
     // add record to your store with add method
     transactionObjectStore.add(record);
@@ -41,12 +43,12 @@ function saveRecord(record) {
     console.log('Transaction stored in IndexDB');
 }
 
-function uploadTransaction() {
+function uploadTransaction(type = 'new_transaction') {
     // open a transaction on your db
-    const transaction = db.transaction(['new_transaction'], 'readwrite');
+    const transaction = db.transaction([type], 'readwrite');
 
     // access your object store
-    const transactionObjectStore = transaction.objectStore('new_transaction');
+    const transactionObjectStore = transaction.objectStore(type);
 
     // get all records from store and set to a variable
     const getAll = transactionObjectStore.getAll();
@@ -55,30 +57,45 @@ function uploadTransaction() {
     getAll.onsuccess = function() {
         // if there was data in indexedDb's store, let's send it to the api server
         if (getAll.result.length > 0) {
-            console.log(`Connection restored: ${getAll.result.length} transaction(s) to submit.`);
-            document.querySelector(".form .error").innerHTML = '';
-            fetch('/api/transaction', {
-                    method: 'POST',
+            console.log(`Connection restored: ${getAll.result.length} ${type}(s) to submit.`);
+
+            let apiCall = {
+                route: '/api/transaction',
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            }
+            switch (type) {
+                case 'new_removal':
+                    apiCall.method = 'DELETE'
+                    break;
+
+                default:
+                    break;
+            }
+
+
+            fetch(apiCall.route, {
+                    method: apiCall.method,
                     body: JSON.stringify(getAll.result),
-                    headers: {
-                        Accept: 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json'
-                    }
+                    headers: apiCall.headers
                 })
                 .then(response => response.json())
                 .then(serverResponse => {
                     if (serverResponse.message) {
+                        console.log(serverResponse);
                         throw new Error(serverResponse);
                     }
                     // open one more transaction
-                    const transaction = db.transaction(['new_transaction'], 'readwrite');
+                    const transaction = db.transaction([type], 'readwrite');
                     // access the new_transaction object store
-                    const transactionObjectStore = transaction.objectStore('new_transaction');
+                    const transactionObjectStore = transaction.objectStore(type);
                     // clear all items in your store
                     transactionObjectStore.clear();
 
-                    console.log('All saved transactions have been submitted!');
-                    queryServer();
+                    console.log(`All saved ${type}s have been submitted!`);
                 })
                 .catch(err => {
                     console.log(err);
@@ -88,4 +105,9 @@ function uploadTransaction() {
 }
 
 // listen for app coming back online
-window.addEventListener('online', uploadTransaction);
+window.addEventListener('online', () => {
+    document.querySelector(".form .error").innerHTML = '';
+    uploadTransaction();
+    uploadTransaction('new_removal');
+    queryServer();
+});

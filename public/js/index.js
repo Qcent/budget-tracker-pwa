@@ -27,8 +27,13 @@ function readCookie(name) {
 function eraseCookie(name) {
     createCookie(name, "", -1);
 }
-
-// get the transactions by userId
+alertSyncError = () => {
+        document.querySelector(".form .error").innerHTML =
+            `<span class='tooltip2'>Currently unable to sync with server❗
+    <span class="tooltiptext2">Transactions you add/remove will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
+    </span></span>`;
+    }
+    // get the transactions by userId
 const queryServer = () => fetch("/api/user/transactions?userId=" + readCookie("userId"), {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -193,10 +198,7 @@ function sendTransaction(isAdding) {
         })
         .catch(err => {
             // alert user of connection error
-            document.querySelector(".form .error").innerHTML =
-                `<span class='tooltip2'>Currently unable to sync with server❗
-                <span class="tooltiptext2">Transactions you add will not be visible on other devices, and some transactions may not be visible to you, until a connection is restored.
-                </span></span>`;
+            alertSyncError();
 
             // fetch failed, so save in indexed db
             saveRecord(transaction);
@@ -384,29 +386,35 @@ function setDeleteTransaction(el) {
 
 async function removeTransaction(el, id, idx) {
     if (el.closest("tr").classList.contains('deletable')) {
+        //remove transaction from local variable and DB
+        transactions.splice(idx, 1);
+        localStorage.transactions = JSON.stringify(transactions);
+        // update screen
+        populateTotal();
+        populateTable();
+        populateChart();
+        //
+        //inform the server of the removal
+        //create data object to send to server: id of transaction and the user it belongs to
+        const data = { id: id, userId: readCookie('userId') };
         // send fetch request to remove transaction
         let response = await fetch("/api/transaction", {
-            method: "DELETE",
-            body: JSON.stringify({ id: id, userId: readCookie('userId') }),
-            headers: {
-                Accept: "application/json, text/plain, */*",
-                "Content-Type": "application/json"
-            }
-        });
-        response = await response.json();
-        if (response.ok === 'true') {
-            //remove transaction from local variable and DB
-            transactions.splice(idx, 1);
-            localStorage.transactions = JSON.stringify(transactions);
-            // update screen
-            populateTotal();
-            populateTable();
-            populateChart();
-            //
-        } else {
-            console.log("Transaction Remove Error!");
-            console.log(response);
-        }
+                method: "DELETE",
+                body: JSON.stringify(data),
+                headers: {
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json"
+                }
+            })
+            .catch(err => {
+                // alert user of connection error
+                alertSyncError();
+
+                // fetch failed, so save in indexed db
+                saveRecord(data, 'new_removal');
+            });
+
+
     }
 };
 
