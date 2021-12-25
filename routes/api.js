@@ -28,7 +28,7 @@ router.route('/api/user/transactions').get(sameUser, getUsersTransactions).delet
 /******************** */
 /* TRANSACTION ROUTES */
 /******************** */
-router.post("/api/transaction", withAuth, ({ body, session }, res) => {
+router.post("/api/transaction", sameUser, ({ body, session }, res) => {
     console.log("########### NEW TRANSACTION(S) ############");
     console.log(body);
     Transaction.create(body)
@@ -58,7 +58,7 @@ router.post("/api/transaction", withAuth, ({ body, session }, res) => {
         .catch(err => res.json(err));
 });
 
-router.post("/api/transaction/bulk", withAuth, ({ body }, res) => {
+router.post("/api/transaction/bulk", withAuth, sameUser, ({ body }, res) => {
     Transaction.insertMany(body)
         .then(dbTransaction => {
             res.json(dbTransaction);
@@ -78,7 +78,7 @@ router.get("/api/transaction", withAuth, (req, res) => {
         });
 });
 
-router.delete("/api/transaction", withAuth, ({ body }, res) => {
+router.delete("/api/transaction", sameUser, ({ body }, res) => {
     // when submitted from indexDB transData is an array of objects 
     // so turn a single object into an array so this code will work in all cases
     if (!Array.isArray(body)) body = [body];

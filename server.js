@@ -11,6 +11,8 @@ const yearsFromNow = require('./utils/yearsFromNow');
 
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget";
+const DB_SECRET = process.env.DB_SECRET || 'aFairlyOpenSecr3t';
+const GLOBAL_UserId = process.env.GLOBAL_UserId || "61c5e68a699a28529f231281";
 
 const app = express();
 
@@ -28,12 +30,12 @@ mongoose.connect(MONGODB_URI, {
 mongoose.Promise = global.Promise;
 
 app.use(session({
-    secret: 'my-secret',
+    secret: DB_SECRET,
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl: MONGODB_URI })
 }));
-app.use(cookieParser('my-secret'))
+app.use(cookieParser(DB_SECRET))
     // set a cookie
 app.use(function(req, res, next) {
     // check login
@@ -49,24 +51,23 @@ app.use(function(req, res, next) {
     next(); // <-- important!
 });
 
-// if no user is specified use the globalUser // no login
-const globalUserId = "61c5e68a699a28529f231281";
+// if user is not logged in use the GLOBAL_UserId for a "login"
 app.use(function({ body, query, session }, res, next) {
     // check login
     if (query.userId === 'null') {
-        query.userId = globalUserId;
-        if (!session.loggedIn) { session.userId = globalUserId; }
+        query.userId = GLOBAL_UserId;
+        if (!session.loggedIn) { session.userId = GLOBAL_UserId; }
     }
     if (!body.userId || body.userId == '') {
-        body.userId = globalUserId;
+        body.userId = GLOBAL_UserId;
     }
     next();
 });
 
 app.use(express.static("public"));
 // routes
-app.use(require("./routes/api.js"));
+app.use(require("./routes/api"));
 
 app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}!`);
+    console.log(`App Server listening on port ${PORT}!`);
 });
