@@ -12,7 +12,7 @@ const yearsFromNow = require('./utils/yearsFromNow');
 const PORT = process.env.PORT || 3001;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget";
 const DB_SECRET = process.env.DB_SECRET || 'aFairlyOpenSecr3t';
-const GLOBAL_UserId = process.env.GLOBAL_UserId || "61c5e68a699a28529f231281";
+const GLOBAL_UserId = process.env.GLOBAL_UserId || "61c7b8cf58ceb0798eec5c5b";
 
 const app = express();
 
@@ -26,6 +26,9 @@ mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true
+}, () => {
+    //uncomment to rest database
+    // mongoose.connection.db.dropDatabase();
 });
 mongoose.Promise = global.Promise;
 

@@ -92,16 +92,12 @@ const UserFunctions = {
                         console.log(err);
                         res.status(400).json(err);
                     });
-
-
-
             })
             .catch(err => {
                 console.log(err);
                 res.status(400).json(err);
             });
     },
-
 
     // createUser
     createUser({ body, session }, res) {
@@ -115,7 +111,7 @@ const UserFunctions = {
                     session.username = dbUserData.username;
                     session.loggedIn = true;
 
-                    res.json({ user: dbUserData, message: 'You are now logged in!' });
+                    res.json({ user: { _id: dbUserData._id, username: dbUserData.username }, message: 'You are now logged in!' });
                     console.log("=========== NEW USER CREATED! =============");
                 });
 
