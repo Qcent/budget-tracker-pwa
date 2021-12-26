@@ -4,7 +4,7 @@
  ![MIT](https://img.shields.io/badge/License-MIT-orange)  ![Node.js](https://img.shields.io/badge/Tech-Node.js-lightblue)  ![Express.js](https://img.shields.io/badge/Tech-Express.js-lightblue)  ![MongoDB](https://img.shields.io/badge/Tech-MongoDB-lightblue)  ![Mongoose](https://img.shields.io/badge/Tech-Mongoose-lightblue)  ![Heroku](https://img.shields.io/badge/Tech-Heroku-lightblue)  ![Webpack](https://img.shields.io/badge/Tech-Webpack-lightblue)  ![PWA](https://img.shields.io/badge/Tech-PWA-lightblue) 
 
 ## Description
-Create a budget, add expenses and deposits. Fully functional offline but backed up by a cloud database when connected.  
+Create a user, create a budget, add expenses and deposits. Fully functional offline but backed up by a cloud database when connected.  
 
 ## Table of Contents
 
@@ -19,14 +19,28 @@ Create a budget, add expenses and deposits. Fully functional offline but backed 
 ## Installation
 
 This project requires that Node.js be installed on the target machine and that the user has write access to a MongoDB server.  
- 1. Copy the repository files and then run npm install to install all required dependencies.  
-2. On line 7 of the server.js file edit the uri string or set the MONGODB_URI environment variable as required to connect to your MongoDB server.  
- ```7 |     const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget"; ```  
-3. That's it! You're good to start the server.
+1. Copy the repository files and then run npm install to install all required dependencies.  
+2. On line 13 of the `server.js` file edit the uri string or set the `MONGODB_URI` environment variable as required to connect to your MongoDB server.  
+ ```
+ 13 |     const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/budget"; 
+ ```  
+3. For a little extra security set an environment variable `DB_SECRET` to a string that no one is likely to guess, or at least change the string on line 14 of `server.js` and dont post your change on GitHub.
+4. You're now ready to start the server with `node server.js`. But, to enable a public budget, for users who don't want to login, you'll need to...
+5. Create a user in the database and copy the `_id` associated with that user to line 15 of `server.js`. Or alternatively set the `_id` as the `GLOBAL_UserId` environment variable
 
 ## Usage
 
-Once the project has been installed and configured as outlined above, you can run the server by typing node server.js or npm start. Then navigate to your server's URL and start adding Deposits and withdrawls to your budget! 
+Once the project has been installed and configured as outlined above, you can run the server by typing `node server.js` or `npm start`. Then navigate to your server's URL and start budgeting!
+
+If the server has been configured to have a global user you can get straight to creating transactions and submitting them as either deposits or withdrawals. 
+
+Transactions can be removed by double clicking on them and then clicking on the trash can icon .
+
+All of these transactions however will be part of the public record and could be viewed or altered by anyone with access to the server.
+
+So why not create a private budget with your very own user account? It's as easy as entering a username, email address and a password.
+
+Now you'll have your own private budget accessible only by those with the login credentials to access it. And enjoy all the perks of being a registered user... The functionality to reset your budget with one click. Or just straight up remove your account!
 
 ## Contributing
 
@@ -61,6 +75,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-                 
-
-     
