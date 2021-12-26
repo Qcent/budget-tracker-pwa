@@ -28,7 +28,7 @@ mongoose.connect(MONGODB_URI, {
     useUnifiedTopology: true
 }, () => {
     //uncomment to rest database
-    // mongoose.connection.db.dropDatabase();
+    mongoose.connection.db.dropDatabase();
 });
 mongoose.Promise = global.Promise;
 
