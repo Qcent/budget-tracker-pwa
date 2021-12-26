@@ -53,7 +53,8 @@ router.post("/api/transaction", sameUser, ({ body, session }, res) => {
                 return;
             }
             //console.log(dbUserData)
-            res.json(dbUserData);
+            //sendback the id of the last transaction
+            res.json(dbUserData.transactions[dbUserData.transactions.length - 1]);
         })
         .catch(err => res.json(err));
 });
@@ -83,13 +84,15 @@ router.delete("/api/transaction", sameUser, ({ body }, res) => {
     // so turn a single object into an array so this code will work in all cases
     if (!Array.isArray(body)) body = [body];
     body.forEach(transaction => {
-        //console.log(transaction.id)
+        console.log("########## DELETE TRANSACTION ##########");
+        console.log(transaction)
         Transaction.findOneAndDelete({ _id: transaction.id })
             .then(deletedTransaction => {
                 if (!deletedTransaction) {
                     return res.status(404).json({ message: 'No Transaction with this id! : ' + transaction.id });
                 }
-                if (transaction.id) {
+                console.log("########## SUCCESS ##########");
+                if (transaction.userId) {
                     return User.findOneAndUpdate({ _id: transaction.userId }, { $pull: { transactions: transaction.id } }, { new: true, runValidators: true });
                 }
             })
@@ -98,7 +101,7 @@ router.delete("/api/transaction", sameUser, ({ body }, res) => {
                     res.status(404).json({ message: 'No User found with this id!' });
                     return;
                 }
-
+                console.log("########## AND REMOVED FROM USER ##########");
             })
             .catch(err => res.json(err));
     });

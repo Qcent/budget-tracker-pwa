@@ -151,14 +151,14 @@ const UserFunctions = {
                 console.log('***********DELETING USER*************');
                 console.log(dbUserData);
 
-                res.json({ dbUserData, deleted: 'true' });
+                res.json({ deleted: 'true' });
             })
             .catch(err => res.status(400).json(err));
     },
 
     userLogin({ body, session }, res) {
         console.log("*************** LOGIN ATTEMPT ***************");
-        console.log(body)
+        console.log(body.email);
         if (session.loggedIn) {
             console.log("ALREADY LOGGED IN!")
             res.status(400).json({ message: 'ALREADY LOGGED IN!' });
@@ -188,7 +188,7 @@ const UserFunctions = {
                     session.username = dbUserData.username;
                     session.loggedIn = true;
 
-                    res.json({ user: dbUserData, message: 'You are now logged in!' });
+                    res.json({ user: { _id: dbUserData._id, username: dbUserData.username }, message: 'You are now logged in!' });
                     console.log("=========== SUCCESS! =============");
                 });
             });
