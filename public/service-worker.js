@@ -12,13 +12,18 @@ const FILES_TO_CACHE = [
     "./icons/trash-svgrepo-com.svg",
     "./js/idb.js",
     "./js/index.js",
+    "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
+    "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css",
+    "https://cdn.jsdelivr.net/npm/chart.js@2.8.0",
+    "https://code.jquery.com/jquery-3.4.1.slim.min.js",
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
 ];
 
 self.addEventListener('install', function(e) {
     e.waitUntil(
         caches.open(CACHE_NAME).then(function(cache) {
-            console.log('installing cache : ' + CACHE_NAME)
-            return cache.addAll(FILES_TO_CACHE)
+            console.log('installing cache : ' + CACHE_NAME);
+            return cache.addAll(FILES_TO_CACHE);
         })
     )
 });
