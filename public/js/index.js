@@ -137,9 +137,32 @@ function populateChart() {
             datasets: [{
                 label: "Total Over Time",
                 fill: true,
-                backgroundColor: "#6666ff",
+                backgroundColor: "#4242fa",
+                borderColor: "#fa8542",
                 data
             }]
+        },
+        options: {
+            legend: {
+                labels: {
+                    fontColor: "blue",
+                    fontSize: 16
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontColor: "#666",
+                        fontSize: 16,
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontColor: "purple",
+                        fontSize: 14,
+                    }
+                }]
+            }
         }
     });
 };
