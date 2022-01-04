@@ -14,7 +14,8 @@ body {
     background-color: var(--app-bg-color);
 }
 
-.navlink {
+.navlink,
+#logoutNav {
     position: relative;
     z-index: 999;
 }
