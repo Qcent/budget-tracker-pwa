@@ -14,6 +14,11 @@ body {
     background-color: var(--app-bg-color);
 }
 
+.navlink {
+    position: relative;
+    z-index: 999;
+}
+
 button,
 input {
     font-size: 100%;
@@ -56,6 +61,7 @@ tr:nth-child(even) {
 }
 
 .insideWrapper {
+    z-index: 0;
     position: relative;
     top: -2.3rem;
 }
