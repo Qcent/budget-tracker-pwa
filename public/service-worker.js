@@ -16,7 +16,8 @@ const FILES_TO_CACHE = [
     "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css",
     "https://cdn.jsdelivr.net/npm/chart.js@2.8.0",
     "https://code.jquery.com/jquery-3.4.1.slim.min.js",
-    "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js",
+    "https://fonts.googleapis.com/css2?family=Oswald&display=swap"
 ];
 
 self.addEventListener('install', function(e) {
