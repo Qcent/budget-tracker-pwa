@@ -85,8 +85,8 @@ function uploadTransaction(type = 'new_transaction') {
                 .then(response => response.json())
                 .then(serverResponse => {
                     if (serverResponse.message) {
-                        console.log(serverResponse);
-                        throw new Error(serverResponse);
+                        //console.log(serverResponse);
+                        throw new Error(serverResponse.message);
                     }
                     // open one more transaction
                     const transaction = db.transaction([type], 'readwrite');
