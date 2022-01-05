@@ -1,7 +1,7 @@
 
 # Budget Tracker PWA
  
- ![MIT](https://img.shields.io/badge/License-MIT-orange)  ![Node.js](https://img.shields.io/badge/Tech-Node.js-lightblue)  ![Express.js](https://img.shields.io/badge/Tech-Express.js-lightblue)  ![MongoDB](https://img.shields.io/badge/Tech-MongoDB-lightblue)  ![Mongoose](https://img.shields.io/badge/Tech-Mongoose-lightblue)  ![Heroku](https://img.shields.io/badge/Tech-Heroku-lightblue)  ![Webpack](https://img.shields.io/badge/Tech-Webpack-lightblue)  ![PWA](https://img.shields.io/badge/Tech-PWA-lightblue) 
+ ![MIT](https://img.shields.io/badge/License-MIT-orange)  ![HTML](https://img.shields.io/badge/Tech-HTML-lightblue)  ![CSS](https://img.shields.io/badge/Tech-CSS-lightblue)  ![Bootstrap](https://img.shields.io/badge/Tech-Bootstrap-lightblue)  ![JavaScript](https://img.shields.io/badge/Tech-JavaScript-lightblue)  ![jQuery](https://img.shields.io/badge/Tech-jQuery-lightblue)  ![Node.js](https://img.shields.io/badge/Tech-Node.js-lightblue)  ![Express.js](https://img.shields.io/badge/Tech-Express.js-lightblue)  ![MongoDB](https://img.shields.io/badge/Tech-MongoDB-lightblue)  ![Mongoose](https://img.shields.io/badge/Tech-Mongoose-lightblue)  ![Heroku](https://img.shields.io/badge/Tech-Heroku-lightblue)  ![PWA](https://img.shields.io/badge/Tech-PWA-lightblue)  ![express%20session](https://img.shields.io/badge/Tech-express%20session-lightblue)  ![connect%20mongo](https://img.shields.io/badge/Tech-connect%20mongo-lightblue)  ![bcrypt](https://img.shields.io/badge/Tech-bcrypt-lightblue)  ![morgan](https://img.shields.io/badge/Tech-morgan-lightblue)  ![cookie%20parser](https://img.shields.io/badge/Tech-cookie%20parser-lightblue)  ![Chart.js](https://img.shields.io/badge/Tech-Chart.js-lightblue) 
 
 
 
